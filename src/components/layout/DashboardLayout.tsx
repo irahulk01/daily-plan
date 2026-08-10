@@ -3,6 +3,7 @@ import { Topbar } from "./Topbar";
 import { BottomNav } from "./BottomNav";
 import { CreateTaskModal } from "../CreateTaskModal";
 import { db } from "@/lib/db";
+import { Suspense } from "react";
 
 export async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const projects = await db.project.findMany({
@@ -40,7 +41,9 @@ export async function DashboardLayout({ children }: { children: React.ReactNode 
       </div>
 
       {/* Global Modals */}
-      <CreateTaskModal projects={projects} />
+      <Suspense fallback={null}>
+        <CreateTaskModal projects={projects} />
+      </Suspense>
     </div>
   );
 }
