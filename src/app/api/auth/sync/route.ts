@@ -60,21 +60,36 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Could not identify user from token" }, { status: 400 });
     }
 
-    // 3. Upsert user in MongoDB
-    const user = await db.user.upsert({
-      where: { firebaseUid: uid },
-      update: {
-        email: email ?? "",
-        name: name ?? null,
-        photoUrl: photoUrl ?? null,
-      },
-      create: {
-        firebaseUid: uid,
-        email: email ?? "",
-        name: name ?? null,
-        photoUrl: photoUrl ?? null,
+    // 3. Find existing user by firebaseUid or email to avoid unique index conflicts
+    let user = await db.user.findFirst({
+      where: {
+        OR: [
+          { firebaseUid: uid },
+          ...(email ? [{ email }] : []),
+        ],
       },
     });
+
+    if (user) {
+      user = await db.user.update({
+        where: { id: user.id },
+        data: {
+          firebaseUid: uid,
+          email: email ?? user.email,
+          name: name ?? user.name,
+          photoUrl: photoUrl ?? user.photoUrl,
+        },
+      });
+    } else {
+      user = await db.user.create({
+        data: {
+          firebaseUid: uid,
+          email: email ?? "",
+          name: name ?? null,
+          photoUrl: photoUrl ?? null,
+        },
+      });
+    }
 
     // 4. Set session cookie
     await setSession({
