@@ -44,8 +44,8 @@ export function FocusSlider({ tasks }: FocusSliderProps) {
   };
 
   return (
-    <section className="flex flex-col gap-3">
-      <div className="flex items-center justify-between px-1">
+    <section className="flex flex-col gap-3 -mx-4 sm:-mx-6 lg:-mx-8">
+      <div className="flex items-center justify-between px-4 sm:px-6 lg:px-8">
         <h2 className="text-[11px] font-extrabold uppercase tracking-widest text-[#D4E556] flex items-center gap-1.5">
           <span className="text-yellow-400 drop-shadow-[0_0_8px_rgba(250,204,21,0.6)]">★</span> FOCUS & PRIORITY TASKS
         </h2>
@@ -73,9 +73,9 @@ export function FocusSlider({ tasks }: FocusSliderProps) {
         )}
       </div>
 
-      {/* Slider Carousel Container */}
-      <div className="relative overflow-hidden">
-        <div className="flex gap-4 overflow-x-auto snap-x snap-mandatory scrollbar-hide py-2 px-1">
+      {/* Slider Carousel Container — peek px shows adjacent cards on both sides */}
+      <div className="relative w-full overflow-hidden">
+        <div className="flex gap-3 overflow-x-auto snap-x snap-mandatory scrollbar-hide py-2 px-4 sm:px-6 lg:px-8">
           {tasks.map((task, index) => {
             const isActive = index === activeIndex;
             const isCompleted = task.status === "Completed";
@@ -85,18 +85,18 @@ export function FocusSlider({ tasks }: FocusSliderProps) {
                 ref={(el) => { cardRefs.current[index] = el; }}
                 onClick={() => scrollToCard(index)}
                 animate={{
-                  scale: isActive ? 1.02 : 0.96,
+                  scale: isActive ? 1 : 0.94,
                   zIndex: isActive ? 20 : 1,
-                  opacity: isActive ? 1 : 0.7,
+                  opacity: isActive ? 1 : 0.5,
                 }}
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.98 }}
+                whileTap={{ scale: 0.97 }}
                 transition={{ type: "spring", stiffness: 350, damping: 25 }}
-                className={`snap-center shrink-0 w-[90%] sm:w-[92%] max-w-2xl rounded-[2.25rem] border transition-all duration-300 cursor-pointer p-5 sm:p-6 shadow-xl relative overflow-hidden group ${
+                className={`snap-center shrink-0 rounded-[2.25rem] border transition-all duration-300 cursor-pointer p-5 sm:p-6 shadow-xl relative overflow-hidden group ${
                   isActive
                     ? "bg-[#3A393E] border-[#D4E556] shadow-[0_0_25px_rgba(212,229,86,0.25)] ring-2 ring-[#D4E556]/40"
-                    : "bg-[#2D2C30] border-white/10 hover:border-white/20"
+                    : "bg-[#2D2C30] border-white/10"
                 } ${isPending ? "opacity-50" : ""}`}
+                style={{ width: "calc(100% - 2.5rem)" }}
               >
                 <div className="absolute -right-20 -top-20 w-64 h-64 bg-[#D4E556]/10 blur-[80px] rounded-full group-hover:bg-[#D4E556]/20 transition-all duration-700" />
                 

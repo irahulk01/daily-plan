@@ -14,7 +14,7 @@ export async function DashboardLayout({ children }: { children: React.ReactNode 
   });
 
   return (
-    <div className="flex h-screen overflow-hidden relative bg-[#515055] text-white">
+    <div className="flex h-screen overflow-hidden relative bg-[#1C1C1E] text-white">
       {/* Warm charcoal background */}
       <div className="relative z-10 flex h-full w-full">
         {/* Sidebar for desktop */}

@@ -42,48 +42,69 @@ export default async function Dashboard() {
 
   return (
     <div className="flex flex-col gap-6 pb-12">
-      {/* Modern High-End Dashboard Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pt-1 pb-2 border-b border-white/5">
-        <div className="flex flex-col gap-1">
-          <div className="flex items-center gap-2">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#D4E556]/15 text-[#D4E556] text-xs font-black uppercase tracking-wider border border-[#D4E556]/30 shadow-sm">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#D4E556]" />
-              {format(today, "EEEE, MMM d")}
-            </span>
+
+      {/* Top Hero Header Section — with background image */}
+      <div className="relative -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 pt-6 pb-12 overflow-hidden">
+        {/* Background image — blurred and dark-tinted */}
+        <div
+          className="absolute inset-0 pointer-events-none scale-105"
+          style={{
+            backgroundImage: "url('/bg-home.jpg')",
+            backgroundSize: "cover",
+            backgroundPosition: "center 20%",
+            backgroundRepeat: "no-repeat",
+            filter: "blur(8px) brightness(0.55)",
+          }}
+        />
+        {/* Additional dark overlay for text contrast */}
+        <div className="absolute inset-0 pointer-events-none bg-[#1A1A1E]/50" />
+        {/* Bottom fade-out so section blends into the rest of the page */}
+        <div className="absolute bottom-0 left-0 right-0 h-20 pointer-events-none bg-gradient-to-b from-transparent to-[#1C1C1E]" />
+
+        {/* Modern High-End Dashboard Header */}
+        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4 pt-1 pb-2">
+          <div className="flex flex-col gap-1">
+            <div className="flex items-center gap-2">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#D4E556]/15 text-[#D4E556] text-xs font-black uppercase tracking-wider border border-[#D4E556]/30 shadow-sm">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#D4E556]" />
+                {format(today, "EEEE, MMM d")}
+              </span>
+            </div>
+
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight leading-snug">
+              Good morning, <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#D4E556] to-emerald-400">Rahul</span> 👋
+            </h1>
+            <p className="text-xs font-semibold text-[#A0A0A5]">
+              You have <span className="text-white font-bold">{todayTasks.length} tasks</span> scheduled for today
+            </p>
           </div>
 
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight leading-snug">
-            Good morning, <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#D4E556] to-emerald-400">Rahul</span> 👋
-          </h1>
-          <p className="text-xs font-semibold text-[#A0A0A5]">
-            You have <span className="text-white font-bold">{todayTasks.length} tasks</span> scheduled for today
-          </p>
-        </div>
+          {/* High-End Glass Insight Badges */}
+          <div className="flex items-center gap-2 flex-wrap shrink-0">
+            <div className="flex items-center gap-2.5 p-2 px-4 rounded-2xl bg-[#3A393E] border border-white/10 shadow-md">
+              <span className="inline-flex items-center gap-1.5 text-xs font-extrabold text-emerald-400">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)]" />
+                {completedCount} Done
+              </span>
+              <span className="text-white/20">|</span>
+              <span className="inline-flex items-center gap-1.5 text-xs font-extrabold text-[#D4E556]">
+                <span className="w-2 h-2 rounded-full bg-[#D4E556]" />
+                {ongoingCount} Active
+              </span>
+              <span className="text-white/20">|</span>
+              <span className="inline-flex items-center gap-1.5 text-xs font-extrabold text-[#A0A0A5]">
+                <span className="w-2 h-2 rounded-full bg-[#A0A0A5]" />
+                {remainingCount} Left
+              </span>
+            </div>
 
-        {/* High-End Glass Insight Badges */}
-        <div className="flex items-center gap-2 flex-wrap shrink-0">
-          <div className="flex items-center gap-2.5 p-2 px-4 rounded-2xl bg-[#3A393E] border border-white/10 shadow-md">
-            <span className="inline-flex items-center gap-1.5 text-xs font-extrabold text-emerald-400">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)]" />
-              {completedCount} Done
-            </span>
-            <span className="text-white/20">|</span>
-            <span className="inline-flex items-center gap-1.5 text-xs font-extrabold text-[#D4E556]">
-              <span className="w-2 h-2 rounded-full bg-[#D4E556]" />
-              {ongoingCount} Active
-            </span>
-            <span className="text-white/20">|</span>
-            <span className="inline-flex items-center gap-1.5 text-xs font-extrabold text-[#A0A0A5]">
-              <span className="w-2 h-2 rounded-full bg-[#A0A0A5]" />
-              {remainingCount} Left
-            </span>
-          </div>
-
-          <div className="px-3.5 py-2.5 rounded-2xl bg-[#D4E556] text-[#1C1C1E] text-xs font-black shadow-lg shadow-[#D4E556]/10 flex items-center gap-1.5 shrink-0">
-            🎯 {completionPercentage}%
+            <div className="px-3.5 py-2.5 rounded-2xl bg-[#D4E556] text-[#1C1C1E] text-xs font-black shadow-lg shadow-[#D4E556]/10 flex items-center gap-1.5 shrink-0">
+              🎯 {completionPercentage}%
+            </div>
           </div>
         </div>
       </div>
+      {/* end hero header section */}
 
       {/* Horizontal Swipeable Focus Task Slider */}
       <FocusSlider tasks={displayFocusTasks} />
