@@ -16,8 +16,8 @@ export function BottomNav() {
   const pathname = usePathname();
 
   return (
-    <div className="md:hidden fixed bottom-6 left-4 right-4 z-50">
-      <div className="flex justify-around items-center h-[68px] px-2 rounded-3xl bg-black/40 backdrop-blur-xl border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.4)]">
+    <div className="md:hidden fixed bottom-4 left-4 right-4 z-50 flex justify-center">
+      <div className="flex justify-around items-center h-14 px-3 w-full max-w-sm rounded-full bg-[#2D2C30]/75 backdrop-blur-2xl border border-white/15 shadow-[0_12px_40px_rgba(0,0,0,0.5)]">
         {navigation.map((item) => {
           const isActive = pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href + "/"));
           return (
@@ -25,12 +25,22 @@ export function BottomNav() {
               key={item.name}
               href={item.href}
               className={cn(
-                "flex flex-col items-center justify-center w-full h-full gap-1.5 transition-all duration-300",
-                isActive ? "text-white scale-110" : "text-white/50 hover:text-white/80"
+                "flex flex-col items-center justify-center w-full h-full gap-1 transition-all duration-300 py-1 rounded-full",
+                isActive
+                  ? "text-[#D4E556]"
+                  : "text-white/50 hover:text-white/80"
               )}
             >
-              <item.icon className={cn("h-[22px] w-[22px]", isActive ? "drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]" : "")} strokeWidth={isActive ? 2.5 : 2} />
-              <span className="text-[10px] font-medium tracking-wide">{item.name}</span>
+              <item.icon
+                className={cn(
+                  "h-4 w-4 transition-all duration-300",
+                  isActive ? "drop-shadow-[0_0_8px_rgba(212,229,86,0.6)] scale-110" : ""
+                )}
+                strokeWidth={isActive ? 2.5 : 2}
+              />
+              <span className={cn("text-[10px] tracking-tight transition-all", isActive ? "font-extrabold text-[#D4E556]" : "font-semibold")}>
+                {item.name}
+              </span>
             </Link>
           );
         })}

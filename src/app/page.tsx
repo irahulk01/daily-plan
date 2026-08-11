@@ -42,44 +42,46 @@ export default async function Dashboard() {
 
   return (
     <div className="flex flex-col gap-6 pb-12">
-      {/* Ultra-Compact Header & Insights Row */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mt-2 md:mt-0">
-        <div className="flex flex-col gap-1.5">
-          <div className="flex items-center gap-2.5">
-            <span className="px-3 py-1 rounded-full bg-[#D4E556] text-[#1C1C1E] text-xs font-black uppercase tracking-widest shadow-sm">
-              {format(today, "EEEE")}
-            </span>
-            <span className="text-xs font-bold text-[#A0A0A5] tracking-wider uppercase">
-              {format(today, "yyyy")}
+      {/* Modern High-End Dashboard Header */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pt-1 pb-2 border-b border-white/5">
+        <div className="flex flex-col gap-1">
+          <div className="flex items-center gap-2">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#D4E556]/15 text-[#D4E556] text-xs font-black uppercase tracking-wider border border-[#D4E556]/30 shadow-sm">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#D4E556]" />
+              {format(today, "EEEE, MMM d")}
             </span>
           </div>
-          
-          <h1 className="text-4xl sm:text-5xl font-black text-white tracking-tight leading-none drop-shadow-md">
-            {format(today, "MMMM d")}
+
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight leading-snug">
+            Good morning, <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#D4E556] to-emerald-400">Rahul</span> 👋
           </h1>
-          
-          <p className="text-xs font-semibold text-[#A0A0A5] mt-1">
-            Good morning, Rahul • <span className="text-[#D4E556] font-bold">{todayTasks.length} tasks scheduled</span>
+          <p className="text-xs font-semibold text-[#A0A0A5]">
+            You have <span className="text-white font-bold">{todayTasks.length} tasks</span> scheduled for today
           </p>
         </div>
 
-        {/* Streamlined Horizontal Insight Pills */}
+        {/* High-End Glass Insight Badges */}
         <div className="flex items-center gap-2 flex-wrap shrink-0">
-          <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-emerald-500/10 text-emerald-400 text-xs font-extrabold border border-emerald-500/20 shadow-sm">
-            <span className="w-2 h-2 rounded-full bg-emerald-400" />
-            {completedCount} Completed
-          </span>
-          <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#D4E556]/10 text-[#D4E556] text-xs font-extrabold border border-[#D4E556]/30 shadow-sm">
-            <span className="w-2 h-2 rounded-full bg-[#D4E556] animate-pulse" />
-            {ongoingCount} Ongoing
-          </span>
-          <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#3A393E] text-white text-xs font-bold border border-white/10 shadow-sm">
-            <span className="w-2 h-2 rounded-full bg-[#A0A0A5]" />
-            {remainingCount} Remaining
-          </span>
-          <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#D4E556] text-[#1C1C1E] text-xs font-black shadow-sm">
+          <div className="flex items-center gap-2.5 p-2 px-4 rounded-2xl bg-[#3A393E] border border-white/10 shadow-md">
+            <span className="inline-flex items-center gap-1.5 text-xs font-extrabold text-emerald-400">
+              <span className="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)]" />
+              {completedCount} Done
+            </span>
+            <span className="text-white/20">|</span>
+            <span className="inline-flex items-center gap-1.5 text-xs font-extrabold text-[#D4E556]">
+              <span className="w-2 h-2 rounded-full bg-[#D4E556] animate-pulse shadow-[0_0_8px_rgba(212,229,86,0.8)]" />
+              {ongoingCount} Active
+            </span>
+            <span className="text-white/20">|</span>
+            <span className="inline-flex items-center gap-1.5 text-xs font-extrabold text-[#A0A0A5]">
+              <span className="w-2 h-2 rounded-full bg-[#A0A0A5]" />
+              {remainingCount} Left
+            </span>
+          </div>
+
+          <div className="px-3.5 py-2.5 rounded-2xl bg-[#D4E556] text-[#1C1C1E] text-xs font-black shadow-lg shadow-[#D4E556]/10 flex items-center gap-1.5 shrink-0">
             🎯 {completionPercentage}%
-          </span>
+          </div>
         </div>
       </div>
 
