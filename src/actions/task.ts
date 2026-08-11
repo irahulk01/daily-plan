@@ -40,6 +40,45 @@ export async function createTask(data: z.infer<typeof taskSchema>) {
   }
 }
 
+export async function getTask(id: string) {
+  try {
+    const task = await db.task.findUnique({
+      where: { id },
+    });
+    return { success: true, data: task };
+  } catch (error) {
+    console.error("Failed to fetch task", error);
+    return { success: false, error: "Failed to fetch task" };
+  }
+}
+
+export async function editTask(id: string, data: z.infer<typeof taskSchema>) {
+  try {
+    const parsed = taskSchema.parse(data);
+    
+    await db.task.update({
+      where: { id },
+      data: {
+        title: parsed.title,
+        description: parsed.description,
+        priority: parsed.priority,
+        projectId: parsed.projectId || null,
+        dueDate: parsed.dueDate ? new Date(parsed.dueDate) : null,
+        isImportant: parsed.isImportant,
+      }
+    });
+
+    revalidatePath("/");
+    revalidatePath("/tasks");
+    revalidatePath("/calendar");
+    
+    return { success: true };
+  } catch (error) {
+    console.error("Failed to edit task", error);
+    return { success: false, error: "Failed to edit task" };
+  }
+}
+
 export async function toggleTaskCompletion(id: string, currentStatus: string) {
   try {
     const isCompleted = currentStatus === "Completed";
