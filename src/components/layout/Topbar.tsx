@@ -20,7 +20,7 @@ export function Topbar() {
   }, []);
 
   return (
-    <header className="sticky top-0 z-30 flex h-12 flex-shrink-0 items-center justify-between gap-x-4 px-4 sm:px-6 lg:px-8 bg-transparent">
+    <header className="sticky top-0 z-30 flex h-13 flex-shrink-0 items-center justify-between gap-x-4 px-4 sm:px-6 lg:px-8 bg-[#515055]/35 backdrop-blur-2xl transition-all duration-300">
       {/* Mobile Title Placeholder (Left) */}
       <div className="flex items-center gap-2 font-bold text-sm md:hidden text-white">
         <span className="bg-clip-text text-transparent bg-gradient-to-r from-white to-white/70">Task Planner</span>
@@ -35,7 +35,6 @@ export function Topbar() {
           title="Notifications"
         >
           <Bell className="h-4 h-4 sm:h-5 sm:w-5" />
-          <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-[#D4E556] shadow-[0_0_8px_rgba(212,229,86,0.8)]" />
         </button>
 
         {/* DP Circle Avatar Button */}

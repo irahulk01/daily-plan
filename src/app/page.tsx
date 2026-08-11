@@ -69,7 +69,7 @@ export default async function Dashboard() {
             </span>
             <span className="text-white/20">|</span>
             <span className="inline-flex items-center gap-1.5 text-xs font-extrabold text-[#D4E556]">
-              <span className="w-2 h-2 rounded-full bg-[#D4E556] animate-pulse shadow-[0_0_8px_rgba(212,229,86,0.8)]" />
+              <span className="w-2 h-2 rounded-full bg-[#D4E556]" />
               {ongoingCount} Active
             </span>
             <span className="text-white/20">|</span>

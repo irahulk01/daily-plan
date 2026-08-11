@@ -66,33 +66,28 @@ export function TimelineView({ tasks }: TimelineViewProps) {
               transition={{ type: "spring", stiffness: 300, damping: 30 }}
               className="flex items-start gap-3 sm:gap-4 w-full max-w-full group"
             >
-              {/* Left Column: Time Pill & Node */}
-              <div className="flex items-center gap-2 shrink-0 pt-3">
-                <span className={`text-xs font-extrabold px-2.5 py-1 rounded-full tracking-wide shadow-sm text-center min-w-[3.75rem] sm:min-w-[4.25rem] ${
+              {/* Left Column: Ultra-Compact Time Badge & Dot */}
+              <div className="flex items-center gap-1.5 shrink-0 pt-2">
+                <span className={`text-[10px] sm:text-xs font-black px-1.5 sm:px-2 py-0.5 rounded-md tracking-tight shadow-sm text-center shrink-0 ${
                   isCurrentHour 
-                    ? 'bg-[#D4E556] text-[#1C1C1E] font-black shadow-[0_0_10px_rgba(212,229,86,0.4)]' 
-                    : 'bg-[#3A393E] text-white border border-white/10'
+                    ? 'bg-[#D4E556] text-[#1C1C1E]' 
+                    : 'bg-[#3A393E] text-white/80 border border-white/10'
                 }`}>
                   {displayTime}
                 </span>
-                <div className={`rounded-full border-2 shrink-0 ${
+                <div className={`rounded-full shrink-0 ${
                   isCurrentHour 
-                    ? 'w-4 h-4 bg-[#D4E556] border-[#D4E556] shadow-[0_0_12px_rgba(212,229,86,0.8)] animate-pulse' 
-                    : 'w-3.5 h-3.5 bg-[#3A393E] border-[#D4E556]'
+                    ? 'w-2.5 h-2.5 bg-[#D4E556]' 
+                    : 'w-2 h-2 bg-[#A0A0A5]'
                 }`} />
               </div>
 
-              {/* Right Column: Cards Container */}
-              <div className={`flex-1 min-w-0 p-4 sm:p-5 rounded-3xl transition-all duration-200 ${
-                isCurrentHour 
-                  ? 'bg-[#D4E556]/5 border-l-2 border-l-[#D4E556]' 
-                  : 'bg-white/5 border-l-2 border-l-transparent hover:border-l-[#D4E556]'
-              }`}>
+              {/* Right Column: Full-Width Cards Container */}
+              <div className="flex-1 min-w-0 flex flex-col gap-3">
                 {/* NOW Badge if current hour */}
                 {isCurrentHour && (
-                  <div className="mb-3 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#D4E556] text-[#1C1C1E] text-xs font-extrabold tracking-wider uppercase shadow-sm">
-                    <span className="w-2 h-2 rounded-full bg-[#1C1C1E] animate-ping" />
-                    NOW / Ongoing
+                  <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#D4E556] text-[#1C1C1E] text-[10px] font-black tracking-wider uppercase shadow-sm self-start">
+                    NOW
                   </div>
                 )}
 

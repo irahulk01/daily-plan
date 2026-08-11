@@ -6,13 +6,14 @@ import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, CheckCircle2, Cloc
 import { useTasks } from "@/hooks/useTasks";
 import { TimelineCard } from "@/components/TimelineCard";
 import { motion, AnimatePresence } from "framer-motion";
+import { CalendarGridSkeleton } from "@/components/skeletons/CalendarSkeleton";
 
 export default function CalendarPage() {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [statusFilter, setStatusFilter] = useState<"ALL" | "COMPLETED" | "PENDING" | "MISSED">("ALL");
 
-  const { data: tasks = [] } = useTasks();
+  const { data: tasks = [], isLoading } = useTasks();
 
   const monthStart = startOfMonth(currentMonth);
   const monthEnd = endOfMonth(currentMonth);
@@ -80,61 +81,65 @@ export default function CalendarPage() {
         </div>
       </div>
 
-      {/* Interactive Circular Calendar Grid */}
-      <div className="bg-[#3A393E] p-5 sm:p-7 rounded-[2.25rem] shadow-xl border border-white/5">
-        <div className="grid grid-cols-7 text-center mb-4">
-          {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day, i) => (
-            <span key={i} className="text-xs font-extrabold text-[#A0A0A5] uppercase tracking-wider">
-              {day}
-            </span>
-          ))}
+      {/* Interactive Circular Calendar Grid or Skeleton */}
+      {isLoading ? (
+        <CalendarGridSkeleton />
+      ) : (
+        <div className="bg-[#3A393E] p-5 sm:p-7 rounded-[2.25rem] shadow-xl border border-white/5">
+          <div className="grid grid-cols-7 text-center mb-4">
+            {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day, i) => (
+              <span key={i} className="text-xs font-extrabold text-[#A0A0A5] uppercase tracking-wider">
+                {day}
+              </span>
+            ))}
+          </div>
+
+          <div className="grid grid-cols-7 gap-2.5 sm:gap-3.5 place-items-center">
+            {/* Empty offset padding cells for first day of month */}
+            {Array.from({ length: startDayOffset }).map((_, i) => (
+              <div key={`empty-${i}`} className="w-9 h-9 sm:w-11 sm:h-11" />
+            ))}
+
+            {daysInMonth.map((day) => {
+              const isSelected = isSameDay(day, selectedDate);
+              const isToday = isSameDay(day, new Date());
+              const dayTasks = tasks.filter((t: any) => t.dueDate && isSameDay(new Date(t.dueDate), day));
+              const hasCompleted = dayTasks.some((t: any) => t.status === "Completed");
+              const hasPending = dayTasks.some((t: any) => t.status === "In Progress");
+              const hasMissed = dayTasks.some((t: any) => t.status !== "Completed" && t.status !== "In Progress");
+
+              return (
+                <motion.button
+                  key={day.toISOString()}
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => setSelectedDate(day)}
+                  className={`relative w-9 h-9 sm:w-11 sm:h-11 rounded-full flex flex-col items-center justify-center font-extrabold text-xs sm:text-sm transition-all ${
+                    isSelected
+                      ? "bg-white text-[#1C1C1E] shadow-xl scale-105 ring-2 ring-[#D4E556]"
+                      : isToday
+                        ? "bg-[#D4E556] text-[#1C1C1E] shadow-md"
+                        : dayTasks.length > 0
+                          ? "border-2 border-dashed border-[#D4E556] text-white bg-[#424147]"
+                          : "bg-[#2D2C30] text-[#A0A0A5] hover:bg-white/10 hover:text-white"
+                  }`}
+                >
+                  <span>{format(day, "d")}</span>
+                  
+                  {/* Status dots on date cell */}
+                  {dayTasks.length > 0 && !isSelected && (
+                    <div className="absolute bottom-0.5 flex items-center gap-0.5">
+                      {hasCompleted && <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />}
+                      {hasPending && <span className="w-1.5 h-1.5 rounded-full bg-[#D4E556]" />}
+                      {hasMissed && <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />}
+                    </div>
+                  )}
+                </motion.button>
+              );
+            })}
+          </div>
         </div>
-
-        <div className="grid grid-cols-7 gap-2.5 sm:gap-3.5 place-items-center">
-          {/* Empty offset padding cells for first day of month */}
-          {Array.from({ length: startDayOffset }).map((_, i) => (
-            <div key={`empty-${i}`} className="w-9 h-9 sm:w-11 sm:h-11" />
-          ))}
-
-          {daysInMonth.map((day) => {
-            const isSelected = isSameDay(day, selectedDate);
-            const isToday = isSameDay(day, new Date());
-            const dayTasks = tasks.filter((t: any) => t.dueDate && isSameDay(new Date(t.dueDate), day));
-            const hasCompleted = dayTasks.some((t: any) => t.status === "Completed");
-            const hasPending = dayTasks.some((t: any) => t.status === "In Progress");
-            const hasMissed = dayTasks.some((t: any) => t.status !== "Completed" && t.status !== "In Progress");
-
-            return (
-              <motion.button
-                key={day.toISOString()}
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => setSelectedDate(day)}
-                className={`relative w-9 h-9 sm:w-11 sm:h-11 rounded-full flex flex-col items-center justify-center font-extrabold text-xs sm:text-sm transition-all ${
-                  isSelected
-                    ? "bg-white text-[#1C1C1E] shadow-xl scale-105 ring-2 ring-[#D4E556]"
-                    : isToday
-                      ? "bg-[#D4E556] text-[#1C1C1E] shadow-md"
-                      : dayTasks.length > 0
-                        ? "border-2 border-dashed border-[#D4E556] text-white bg-[#424147]"
-                        : "bg-[#2D2C30] text-[#A0A0A5] hover:bg-white/10 hover:text-white"
-                }`}
-              >
-                <span>{format(day, "d")}</span>
-                
-                {/* Status dots on date cell */}
-                {dayTasks.length > 0 && !isSelected && (
-                  <div className="absolute bottom-0.5 flex items-center gap-0.5">
-                    {hasCompleted && <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />}
-                    {hasPending && <span className="w-1.5 h-1.5 rounded-full bg-[#D4E556]" />}
-                    {hasMissed && <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />}
-                  </div>
-                )}
-              </motion.button>
-            );
-          })}
-        </div>
-      </div>
+      )}
 
       {/* Distinctly Colored Filter Tabs below Calendar */}
       <div className="flex flex-col gap-4 mt-1">

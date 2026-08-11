@@ -17,7 +17,7 @@ export function BottomNav() {
 
   return (
     <div className="md:hidden fixed bottom-4 left-4 right-4 z-50 flex justify-center">
-      <div className="flex justify-around items-center h-14 px-3 w-full max-w-sm rounded-full bg-[#2D2C30]/75 backdrop-blur-2xl border border-white/15 shadow-[0_12px_40px_rgba(0,0,0,0.5)]">
+      <div className="flex justify-around items-center h-14 px-3 w-full max-w-sm rounded-full bg-[#2D2C30]/35 backdrop-blur-3xl border border-white/20 shadow-[0_12px_40px_rgba(0,0,0,0.4)]">
         {navigation.map((item) => {
           const isActive = pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href + "/"));
           return (
