@@ -1,5 +1,6 @@
 import { Sidebar } from "./Sidebar";
 import { Topbar } from "./Topbar";
+import Link from "next/link";
 import { BottomNav } from "./BottomNav";
 import { CreateTaskModal } from "../CreateTaskModal";
 import { db } from "@/lib/db";
@@ -41,12 +42,12 @@ export async function DashboardLayout({ children }: { children: React.ReactNode 
 
         {/* Floating Action Button (FAB) - Visible mostly on mobile/tablet */}
         <div className="md:hidden fixed bottom-24 right-6 z-50">
-          <a
+          <Link
             href="?modal=create-task"
             className="flex items-center justify-center w-14 h-14 bg-blue-500 text-white rounded-full shadow-[0_0_20px_rgba(59,130,246,0.5)] hover:bg-blue-600 hover:scale-105 active:scale-95 transition-all"
           >
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
-          </a>
+          </Link>
         </div>
       </div>
 

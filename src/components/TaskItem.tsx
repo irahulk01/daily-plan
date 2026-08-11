@@ -4,6 +4,7 @@ import { CheckCircle2, Trash2 } from "lucide-react";
 import { format } from "date-fns";
 import { toggleTaskCompletion, deleteTask } from "@/actions/task";
 import { useTransition } from "react";
+import Link from "next/link";
 
 interface TaskItemProps {
   task: {
@@ -74,18 +75,18 @@ export function TaskItem({ task }: TaskItemProps) {
             {task.priority}
           </div>
           
-          <a
+          <Link
             href={`?edit-task=${task.id}`}
-            className="text-white/20 hover:text-blue-400 opacity-0 group-hover:opacity-100 transition-all"
+            className="text-white/20 hover:text-blue-400 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-all p-2 -m-2"
             title="Edit task"
           >
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>
-          </a>
+          </Link>
           
           <button 
             onClick={handleDelete}
             disabled={isPending}
-            className="text-white/20 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-all"
+            className="text-white/20 hover:text-red-400 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-all p-2 -m-2"
             title="Delete task"
           >
             <Trash2 className="h-4 w-4" />
