@@ -29,7 +29,10 @@ export default function LoginPage() {
         body: JSON.stringify({ idToken }),
       });
 
-      if (!res.ok) throw new Error("Failed to sync user");
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.error || "Failed to sync user");
+      }
 
       router.replace("/");
       router.refresh();

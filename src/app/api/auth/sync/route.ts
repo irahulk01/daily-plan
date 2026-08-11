@@ -41,8 +41,8 @@ export async function POST(req: NextRequest) {
     });
 
     return NextResponse.json({ ok: true, user: { id: user.id, name: user.name, email: user.email } });
-  } catch (err) {
+  } catch (err: any) {
     console.error("[auth/sync] error:", err);
-    return NextResponse.json({ error: "Authentication failed" }, { status: 401 });
+    return NextResponse.json({ error: err?.message || "Authentication failed" }, { status: 401 });
   }
 }
