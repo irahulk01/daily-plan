@@ -2,14 +2,13 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Calendar, CheckSquare, FolderOpen, MoreHorizontal } from "lucide-react";
+import { LayoutDashboard, Calendar, Lightbulb, MoreHorizontal } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navigation = [
   { name: "Today", href: "/", icon: LayoutDashboard },
   { name: "Calendar", href: "/calendar", icon: Calendar },
-  { name: "Tasks", href: "/tasks", icon: CheckSquare },
-  { name: "Projects", href: "/projects", icon: FolderOpen },
+  { name: "Ideas", href: "/ideas", icon: Lightbulb },
   { name: "More", href: "/more", icon: MoreHorizontal },
 ];
 

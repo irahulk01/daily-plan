@@ -14,8 +14,8 @@ export default async function AllTasks() {
     ]
   });
 
-  const todoTasks = tasks.filter(t => t.status !== "Completed");
-  const completedTasks = tasks.filter(t => t.status === "Completed");
+  const todoTasks = tasks.filter((t: any) => t.status !== "Completed");
+  const completedTasks = tasks.filter((t: any) => t.status === "Completed");
 
   return (
     <div className="flex flex-col gap-8 pb-12">
@@ -36,7 +36,7 @@ export default async function AllTasks() {
             <div className="h-px bg-white/10 flex-1"></div>
           </h2>
           <div className="flex flex-col gap-3">
-            {todoTasks.map(task => <TaskItem key={task.id} task={task} />)}
+            {todoTasks.map((task: any) => <TaskItem key={task.id} task={task} />)}
           </div>
         </section>
       )}
@@ -48,7 +48,7 @@ export default async function AllTasks() {
             <div className="h-px bg-white/10 flex-1"></div>
           </h2>
           <div className="flex flex-col gap-3">
-            {completedTasks.map(task => <TaskItem key={task.id} task={task} />)}
+            {completedTasks.map((task: any) => <TaskItem key={task.id} task={task} />)}
           </div>
         </section>
       )}

@@ -60,3 +60,14 @@ model Routine {
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 }
+
+model Idea {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  content     String?
+  color       String?  @default("lime")
+  category    String?  @default("Idea")
+  isPinned    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}

@@ -13,6 +13,7 @@ export function CreateTaskModal({ projects }: { projects: { id: string, name: st
   
   const isCreateOpen = searchParams.get("modal") === "create-task";
   const editTaskId = searchParams.get("edit-task");
+  const prefillDate = searchParams.get("date");
   const isOpen = isCreateOpen || !!editTaskId;
   
   const [isPending, startTransition] = useTransition();
@@ -61,65 +62,81 @@ export function CreateTaskModal({ projects }: { projects: { id: string, name: st
   };
 
   const formattedDate = initialData?.dueDate 
-    ? new Date(initialData.dueDate).toISOString().slice(0, 16) 
-    : "";
+    ? format(new Date(initialData.dueDate), "yyyy-MM-dd'T'HH:mm") 
+    : prefillDate ? format(new Date(prefillDate), "yyyy-MM-dd'T'HH:mm") : "";
 
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
-      <DialogContent className="sm:max-w-[425px] bg-black/60 backdrop-blur-3xl border-white/10 text-white shadow-2xl">
+      <DialogContent className="sm:max-w-[425px] bg-[#3A393E] border-white/10 text-white shadow-2xl rounded-[2rem]">
         <DialogHeader>
           <DialogTitle className="text-xl font-bold">{editTaskId ? "Edit Task" : "Create New Task"}</DialogTitle>
         </DialogHeader>
         {isLoadingData ? (
-          <div className="py-10 text-center text-white/50 animate-pulse">Loading task...</div>
+          <div className="py-10 text-center text-[#A0A0A5] animate-pulse font-medium">Loading task details...</div>
         ) : (
-        <form onSubmit={handleSubmit} className="flex flex-col gap-5 mt-4">
-          <div className="flex flex-col gap-2">
-            <label htmlFor="title" className="text-xs font-semibold uppercase tracking-widest text-white/50">Task Title</label>
+        <form 
+          key={initialData?.id || (editTaskId ? 'loading' : 'new')} 
+          onSubmit={handleSubmit} 
+          className="flex flex-col gap-4 mt-2"
+        >
+          <div className="flex flex-col gap-1.5">
+            <label htmlFor="title" className="text-xs font-bold uppercase tracking-wider text-[#A0A0A5]">Task Title</label>
             <input 
               required
               name="title" 
               id="title" 
               autoFocus
               defaultValue={initialData?.title || ""}
-              className="bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-white/30 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all" 
+              className="bg-white/10 border border-white/10 rounded-2xl px-4 py-3 text-white placeholder:text-white/30 focus:outline-none focus:ring-2 focus:ring-[#D4E556] transition-all" 
               placeholder="What needs to be done?" 
             />
           </div>
 
-          <div className="flex flex-col gap-2">
-            <label htmlFor="projectId" className="text-xs font-semibold uppercase tracking-widest text-white/50">Project</label>
+          <div className="flex flex-col gap-1.5">
+            <label htmlFor="description" className="text-xs font-bold uppercase tracking-wider text-[#A0A0A5]">Description</label>
+            <textarea 
+              name="description" 
+              id="description" 
+              rows={2}
+              defaultValue={initialData?.description || ""}
+              className="bg-white/10 border border-white/10 rounded-2xl px-4 py-2.5 text-white placeholder:text-white/30 focus:outline-none focus:ring-2 focus:ring-[#D4E556] transition-all text-sm resize-none" 
+              placeholder="Add task details or notes..." 
+            />
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <label htmlFor="projectId" className="text-xs font-bold uppercase tracking-wider text-[#A0A0A5]">Idea / Project</label>
             <select 
               name="projectId" 
               id="projectId"
               defaultValue={initialData?.projectId || ""}
-              className="bg-[#111] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 appearance-none"
+              className="bg-[#2A292D] border border-white/10 rounded-2xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-[#D4E556] appearance-none text-sm"
             >
-              <option value="">No Project (Inbox)</option>
+              <option value="">No Idea / Project (Inbox)</option>
               {projects.map(p => (
                 <option key={p.id} value={p.id}>{p.name}</option>
               ))}
             </select>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div className="flex flex-col gap-2">
-              <label htmlFor="dueDate" className="text-xs font-semibold uppercase tracking-widest text-white/50">Due Date & Time</label>
+          <div className="grid grid-cols-2 gap-3">
+            <div className="flex flex-col gap-1.5">
+              <label htmlFor="dueDate" className="text-xs font-bold uppercase tracking-wider text-[#A0A0A5]">Date & Time</label>
               <input 
                 type="datetime-local" 
                 name="dueDate" 
                 id="dueDate"
                 defaultValue={formattedDate}
-                className="bg-[#111] border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                className="bg-[#2A292D] border border-white/10 rounded-2xl px-3 py-2.5 text-white text-xs focus:outline-none focus:ring-2 focus:ring-[#D4E556]"
               />
             </div>
-            <div className="flex flex-col gap-2">
-              <label htmlFor="priority" className="text-xs font-semibold uppercase tracking-widest text-white/50">Priority</label>
+            <div className="flex flex-col gap-1.5">
+              <label htmlFor="priority" className="text-xs font-bold uppercase tracking-wider text-[#A0A0A5]">Priority</label>
               <select 
                 name="priority" 
                 id="priority" 
                 defaultValue={initialData?.priority || "Medium"}
-                className="bg-[#111] border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50 appearance-none"
+                className="bg-[#2A292D] border border-white/10 rounded-2xl px-3 py-2.5 text-white text-xs focus:outline-none focus:ring-2 focus:ring-[#D4E556] appearance-none"
               >
                 <option value="Low">Low</option>
                 <option value="Medium">Medium</option>
@@ -129,21 +146,21 @@ export function CreateTaskModal({ projects }: { projects: { id: string, name: st
             </div>
           </div>
 
-          <div className="flex items-center gap-3 mt-2">
+          <div className="flex items-center gap-3 mt-1">
             <input 
               type="checkbox" 
               name="isImportant" 
               id="isImportant"
               defaultChecked={initialData?.isImportant || false}
-              className="w-5 h-5 rounded border-white/20 bg-white/5 text-blue-500 focus:ring-blue-500/50 focus:ring-offset-0"
+              className="w-4 h-4 rounded border-white/20 bg-white/10 text-[#D4E556] focus:ring-[#D4E556]"
             />
-            <label htmlFor="isImportant" className="text-sm font-medium text-white/80">Mark as important (⭐ Focus)</label>
+            <label htmlFor="isImportant" className="text-xs font-semibold text-white/90">Mark as important (⭐ Focus)</label>
           </div>
 
           <button 
             type="submit" 
             disabled={isPending}
-            className="mt-4 w-full rounded-xl bg-blue-500 hover:bg-blue-600 disabled:opacity-50 py-3.5 font-bold text-white shadow-[0_0_20px_rgba(59,130,246,0.3)] transition-all active:scale-[0.98]"
+            className="mt-2 w-full rounded-2xl bg-[#D4E556] hover:bg-[#C5D647] disabled:opacity-50 py-3.5 font-extrabold text-[#1C1C1E] shadow-sm transition-all active:scale-[0.98]"
           >
             {isPending ? "Saving..." : (editTaskId ? "Update Task" : "Create Task")}
           </button>
