@@ -93,44 +93,44 @@ export function TimelineCard({ task, hideDelete = false }: TimelineCardProps) {
       </div>
 
       {/* Bottom Bar: Checkmark + Project Tag + Action Buttons */}
-      <div className="flex items-center justify-between gap-3 pt-4 border-t border-black/5 mt-1">
-        <div className="flex items-center gap-3">
+      <div className="flex items-center justify-between gap-1.5 sm:gap-3 pt-3 sm:pt-4 border-t border-black/5 mt-1 min-w-0">
+        <div className="flex items-center gap-1.5 sm:gap-2.5 min-w-0 overflow-hidden">
           <motion.button 
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
             onClick={handleToggle}
             disabled={isPending}
-            className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 ${
+            className={`w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center shrink-0 transition-all duration-300 ${
               isCompleted 
                 ? 'bg-emerald-500 text-white shadow-md shadow-emerald-500/30' 
                 : 'bg-white hover:bg-black/10 text-[#515055] hover:text-[#1C1C1E] shadow-sm'
             }`}
             title={isCompleted ? "Mark incomplete" : "Mark complete"}
           >
-            <CheckCircle2 className={`h-6 w-6 transition-transform duration-300 ${isCompleted ? 'scale-110' : 'group-hover:scale-105'}`} />
+            <CheckCircle2 className={`h-5 w-5 sm:h-5 sm:w-5 transition-transform duration-300 ${isCompleted ? 'scale-110' : 'group-hover:scale-105'}`} />
           </motion.button>
 
           {task.project && (
             <motion.span 
               whileHover={{ scale: 1.05 }}
-              className="inline-flex items-center gap-1.5 bg-white px-3.5 py-1.5 rounded-full shadow-sm text-xs font-bold text-[#1C1C1E]"
+              className="inline-flex items-center gap-1 sm:gap-1.5 bg-white px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full shadow-sm text-[10px] sm:text-xs font-bold text-[#1C1C1E] truncate max-w-[110px] sm:max-w-[150px]"
             >
-              <div className={`w-2.5 h-2.5 rounded-full ${task.project.color?.split(' ')[0] || 'bg-slate-400'}`} />
-              {task.project.name}
+              <div className={`w-2 h-2 rounded-full shrink-0 ${task.project.color?.split(' ')[0] || 'bg-slate-400'}`} />
+              <span className="truncate">{task.project.name}</span>
             </motion.span>
           )}
         </div>
 
         {/* Action Buttons: Edit & Delete */}
-        <div className="flex items-center gap-2 shrink-0">
+        <div className="flex items-center gap-1 sm:gap-2 shrink-0">
           <motion.div whileHover={{ scale: 1.15, rotate: 6 }} whileTap={{ scale: 0.9 }}>
             <Link
               href={`?edit-task=${task.id}`}
               onClick={(e) => e.stopPropagation()}
-              className="group/edit w-10 h-10 rounded-full bg-white text-[#1C1C1E] shadow-sm hover:bg-[#D4E556] hover:shadow-[0_0_15px_rgba(212,229,86,0.6)] flex items-center justify-center transition-all duration-300"
+              className="group/edit w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-white text-[#1C1C1E] shadow-sm hover:bg-[#D4E556] hover:shadow-[0_0_15px_rgba(212,229,86,0.6)] flex items-center justify-center transition-all duration-300"
               title="Edit task details"
             >
-              <Edit2 className="h-4 w-4 transition-transform duration-300 group-hover/edit:rotate-12" />
+              <Edit2 className="h-3.5 w-3.5 sm:h-4 sm:w-4 transition-transform duration-300 group-hover/edit:rotate-12" />
             </Link>
           </motion.div>
           {!hideDelete && (
@@ -138,10 +138,10 @@ export function TimelineCard({ task, hideDelete = false }: TimelineCardProps) {
               <button 
                 onClick={handleDelete}
                 disabled={isPending}
-                className="group/delete w-10 h-10 rounded-full bg-white text-[#1C1C1E] shadow-sm hover:bg-red-500 hover:text-white hover:shadow-[0_0_15px_rgba(239,68,68,0.5)] flex items-center justify-center transition-all duration-300"
+                className="group/delete w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-white text-[#1C1C1E] shadow-sm hover:bg-red-500 hover:text-white hover:shadow-[0_0_15px_rgba(239,68,68,0.5)] flex items-center justify-center transition-all duration-300"
                 title="Delete task"
               >
-                <Trash2 className="h-4 w-4 transition-transform duration-300 group-hover/delete:-rotate-12" />
+                <Trash2 className="h-3.5 w-3.5 sm:h-4 sm:w-4 transition-transform duration-300 group-hover/delete:-rotate-12" />
               </button>
             </motion.div>
           )}
