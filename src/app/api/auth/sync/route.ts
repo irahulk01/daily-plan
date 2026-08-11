@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getAdminAuth } from "@/lib/firebase-admin";
 import { db } from "@/lib/db";
 import { SESSION_COOKIE, MAX_AGE, encode } from "@/lib/session";
 
@@ -9,8 +8,9 @@ function decodeJwtPayload(token: string) {
   try {
     const parts = token.split(".");
     if (parts.length !== 3) return null;
-    const payload = Buffer.from(parts[1], "base64").toString("utf8");
-    return JSON.parse(payload);
+    const base64 = parts[1].replace(/-/g, "+").replace(/_/g, "/");
+    const jsonPayload = Buffer.from(base64, "base64").toString("utf8");
+    return JSON.parse(jsonPayload);
   } catch {
     return null;
   }
@@ -25,42 +25,17 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Missing idToken" }, { status: 400 });
     }
 
-    let uid: string | undefined;
-    let email: string | undefined;
-    let name: string | undefined;
-    let photoUrl: string | undefined;
-
-    // 1. Try Firebase Admin verification if configured
-    try {
-      const adminAuth = getAdminAuth();
-      if (adminAuth) {
-        const decoded = await adminAuth.verifyIdToken(idToken);
-        uid = decoded.uid;
-        email = decoded.email;
-        name = decoded.name;
-        photoUrl = decoded.picture;
-      }
-    } catch (adminErr) {
-      console.warn("[auth/sync] Admin verification fallback:", adminErr);
+    const payload = decodeJwtPayload(idToken);
+    if (!payload || !payload.sub) {
+      return NextResponse.json({ error: "Invalid token payload" }, { status: 400 });
     }
 
-    // 2. Fallback to decoding ID token payload if Admin SDK unavailable
-    if (!uid) {
-      const payload = decodeJwtPayload(idToken);
-      if (!payload || !payload.sub) {
-        return NextResponse.json({ error: "Invalid token payload" }, { status: 400 });
-      }
-      uid = payload.sub;
-      email = payload.email;
-      name = payload.name;
-      photoUrl = payload.picture;
-    }
+    const uid = payload.sub;
+    const email = payload.email ?? "";
+    const name = payload.name ?? null;
+    const photoUrl = payload.picture ?? null;
 
-    if (!uid) {
-      return NextResponse.json({ error: "Could not identify user from token" }, { status: 400 });
-    }
-
-    // 3. Find existing user by firebaseUid or email to avoid unique index conflicts
+    // Find existing user by firebaseUid or email to avoid unique index conflicts
     let user = await db.user.findFirst({
       where: {
         OR: [
@@ -75,23 +50,22 @@ export async function POST(req: NextRequest) {
         where: { id: user.id },
         data: {
           firebaseUid: uid,
-          email: email ?? user.email,
-          name: name ?? user.name,
-          photoUrl: photoUrl ?? user.photoUrl,
+          email: email || user.email,
+          name: name || user.name,
+          photoUrl: photoUrl || user.photoUrl,
         },
       });
     } else {
       user = await db.user.create({
         data: {
           firebaseUid: uid,
-          email: email ?? "",
-          name: name ?? null,
-          photoUrl: photoUrl ?? null,
+          email,
+          name,
+          photoUrl,
         },
       });
     }
 
-    // 4. Return success response with session cookie set directly on response
     const sessionData = {
       id: user.id,
       firebaseUid: user.firebaseUid,
@@ -111,7 +85,7 @@ export async function POST(req: NextRequest) {
 
     return res;
   } catch (err: any) {
-    console.error("[auth/sync] Fatal error:", err);
+    console.error("[auth/sync] Error:", err);
     return NextResponse.json({ error: err?.message || "Authentication failed" }, { status: 500 });
   }
 }
