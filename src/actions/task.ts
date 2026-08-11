@@ -1,6 +1,7 @@
 "use server";
 
 import { db } from "@/lib/db";
+import { getSession } from "@/lib/session";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
@@ -13,8 +14,15 @@ const taskSchema = z.object({
   isImportant: z.boolean().default(false),
 });
 
+async function requireUser() {
+  const session = await getSession();
+  if (!session) throw new Error("Unauthorized");
+  return session;
+}
+
 export async function createTask(data: z.infer<typeof taskSchema>) {
   try {
+    const user = await requireUser();
     const parsed = taskSchema.parse(data);
     
     await db.task.create({
@@ -26,6 +34,7 @@ export async function createTask(data: z.infer<typeof taskSchema>) {
         dueDate: parsed.dueDate ? new Date(parsed.dueDate) : null,
         isImportant: parsed.isImportant,
         status: "Todo",
+        userId: user.id,
       }
     });
 
@@ -34,9 +43,8 @@ export async function createTask(data: z.infer<typeof taskSchema>) {
     revalidatePath("/calendar");
     
     return { success: true };
-  } catch (error) {
-    console.error("Failed to create task", error);
-    return { success: false, error: "Failed to create task" };
+  } catch (error: any) {
+    return { success: false, error: error?.message || "Failed to create task" };
   }
 }
 

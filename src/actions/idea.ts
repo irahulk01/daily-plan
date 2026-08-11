@@ -1,12 +1,13 @@
 "use server";
 
 import { db } from "@/lib/db";
-import { PrismaClient } from "@prisma/client";
+import { getSession } from "@/lib/session";
 import { revalidatePath } from "next/cache";
 
-function getIdeaDelegate() {
-  const client = (db as any).idea ? db : new PrismaClient();
-  return (client as any).idea;
+async function requireUser() {
+  const session = await getSession();
+  if (!session) throw new Error("Unauthorized");
+  return session;
 }
 
 export async function createIdea(data: {
@@ -16,13 +17,14 @@ export async function createIdea(data: {
   color?: string;
 }) {
   try {
-    const delegate = getIdeaDelegate();
-    const newIdea = await delegate.create({
+    const user = await requireUser();
+    const newIdea = await db.idea.create({
       data: {
         title: data.title,
         content: data.content || "",
         category: data.category || "Idea",
         color: data.color || "lime",
+        userId: user.id,
       },
     });
 
@@ -37,8 +39,7 @@ export async function createIdea(data: {
 
 export async function deleteIdea(id: string) {
   try {
-    const delegate = getIdeaDelegate();
-    await delegate.delete({
+    await db.idea.delete({
       where: { id },
     });
 
@@ -52,8 +53,7 @@ export async function deleteIdea(id: string) {
 
 export async function togglePinIdea(id: string, currentPinned: boolean) {
   try {
-    const delegate = getIdeaDelegate();
-    await delegate.update({
+    await db.idea.update({
       where: { id },
       data: { isPinned: !currentPinned },
     });

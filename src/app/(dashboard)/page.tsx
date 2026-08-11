@@ -1,6 +1,7 @@
 import { CalendarDays } from "lucide-react";
 import { format, isSameDay } from "date-fns";
 import { db } from "@/lib/db";
+import { getSession } from "@/lib/session";
 import { TaskItem } from "@/components/TaskItem";
 import { FocusSlider } from "@/components/FocusSlider";
 import { DashboardTabs } from "@/components/DashboardTabs";
@@ -8,15 +9,21 @@ import { DashboardTabs } from "@/components/DashboardTabs";
 export const dynamic = 'force-dynamic';
 
 export default async function Dashboard() {
+  const session = await getSession();
   const today = new Date();
   
-  // Fetch tasks and projects from the database
+  // Fetch tasks scoped to the logged-in user
   const tasks = await db.task.findMany({
+    where: session ? { userId: session.id } : {},
     include: { project: true },
-    orderBy: { priority: 'desc' }, // simple ordering for now
+    orderBy: { priority: 'desc' },
   });
 
-  const todayTasks = tasks.filter((t: any) => t.dueDate && isSameDay(new Date(t.dueDate), today));
+  const todayTasks = tasks.filter((t: any) => {
+    const createdToday = isSameDay(new Date(t.createdAt), today);
+    const dueToday = t.dueDate ? isSameDay(new Date(t.dueDate), today) : false;
+    return createdToday || dueToday;
+  });
   
   const now = new Date();
   const currentHour = now.getHours();
@@ -72,7 +79,7 @@ export default async function Dashboard() {
             </div>
 
             <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight leading-snug">
-              Good morning, <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#D4E556] to-emerald-400">Rahul</span> 👋
+              Good morning, <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#D4E556] to-emerald-400">{session?.name?.split(" ")[0] ?? "there"}</span> 👋
             </h1>
             <p className="text-xs font-semibold text-[#A0A0A5]">
               You have <span className="text-white font-bold">{todayTasks.length} tasks</span> scheduled for today

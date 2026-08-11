@@ -1,5 +1,5 @@
 import { db } from "@/lib/db";
-import { PrismaClient } from "@prisma/client";
+import { getSession } from "@/lib/session";
 import { Lightbulb, Plus, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { IdeaStack } from "@/components/IdeaStack";
@@ -11,8 +11,9 @@ export const dynamic = "force-dynamic";
 async function IdeaFeed() {
   let ideas: any[] = [];
   try {
-    const client = (db as any).idea ? db : new PrismaClient();
-    ideas = await (client as any).idea.findMany({
+    const session = await getSession();
+    ideas = await db.idea.findMany({
+      where: session ? { userId: session.id } : {},
       orderBy: [
         { isPinned: "desc" },
         { createdAt: "desc" },

@@ -1,11 +1,14 @@
 import { CheckSquare } from "lucide-react";
 import { db } from "@/lib/db";
+import { getSession } from "@/lib/session";
 import { TaskItem } from "@/components/TaskItem";
 
 export const dynamic = 'force-dynamic';
 
 export default async function AllTasks() {
+  const session = await getSession();
   const tasks = await db.task.findMany({
+    where: session ? { userId: session.id } : {},
     include: { project: true },
     orderBy: [
       { status: 'asc' },

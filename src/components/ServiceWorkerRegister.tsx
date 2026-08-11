@@ -6,14 +6,9 @@ export function ServiceWorkerRegister() {
   useEffect(() => {
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", () => {
-        navigator.serviceWorker.register("/sw.js").then(
-          (reg) => {
-            console.log("PWA ServiceWorker registered successfully:", reg.scope);
-          },
-          (err) => {
-            console.log("PWA ServiceWorker registration failed:", err);
-          }
-        );
+        navigator.serviceWorker.register("/sw.js").catch(() => {
+          // ignore registration errors silently
+        });
       });
     }
   }, []);

@@ -52,18 +52,28 @@ export function CreateTaskModal({ projects }: { projects: { id: string, name: st
     };
 
     startTransition(async () => {
-      if (editTaskId) {
-        await editTask(editTaskId, data);
-      } else {
-        await createTask(data);
+      try {
+        let result;
+        if (editTaskId) {
+          result = await editTask(editTaskId, data);
+        } else {
+          result = await createTask(data);
+        }
+        if (result?.success) {
+          router.refresh();
+        }
+        handleOpenChange(false);
+      } catch (err) {
+        // handle error silently
       }
-      handleOpenChange(false);
     });
   };
 
+  // Default to today + current time for new tasks
+  const defaultNow = format(new Date(), "yyyy-MM-dd'T'HH:mm");
   const formattedDate = initialData?.dueDate 
     ? format(new Date(initialData.dueDate), "yyyy-MM-dd'T'HH:mm") 
-    : prefillDate ? format(new Date(prefillDate), "yyyy-MM-dd'T'HH:mm") : "";
+    : prefillDate ? format(new Date(prefillDate), "yyyy-MM-dd'T'HH:mm") : defaultNow;
 
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
@@ -75,7 +85,7 @@ export function CreateTaskModal({ projects }: { projects: { id: string, name: st
           <div className="py-10 text-center text-[#A0A0A5] animate-pulse font-medium">Loading task details...</div>
         ) : (
         <form 
-          key={initialData?.id || (editTaskId ? 'loading' : 'new')} 
+          key={isOpen ? (initialData?.id || prefillDate || formattedDate) : 'closed'} 
           onSubmit={handleSubmit} 
           className="flex flex-col gap-4 mt-2"
         >

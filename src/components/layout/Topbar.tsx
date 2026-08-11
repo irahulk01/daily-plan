@@ -1,12 +1,29 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { Bell, Settings, User, LogOut, Sliders, Moon, Shield } from "lucide-react";
+import { Bell, Settings, LogOut, Sliders, Shield } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useRouter } from "next/navigation";
+import { signOut } from "firebase/auth";
+import { auth } from "@/lib/firebase";
+import Image from "next/image";
 
-export function Topbar() {
+interface TopbarProps {
+  user?: {
+    name: string | null;
+    email: string;
+    photoUrl: string | null;
+  };
+}
+
+export function Topbar({ user }: TopbarProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
+
+  const initials = user?.name
+    ? user.name.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase()
+    : "DP";
 
   // Close menu on outside click
   useEffect(() => {
@@ -18,6 +35,17 @@ export function Topbar() {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  async function handleLogout() {
+    setIsMenuOpen(false);
+    try {
+      await signOut(auth); // sign out of Firebase client
+      await fetch("/api/auth/logout", { method: "POST" }); // clear session cookie
+      router.replace("/login");
+    } catch (err) {
+      console.error("Logout error:", err);
+    }
+  }
 
   return (
     <header className="sticky top-0 z-30 flex h-13 flex-shrink-0 items-center justify-between gap-x-4 px-4 sm:px-6 lg:px-8 bg-[#515055]/35 backdrop-blur-2xl transition-all duration-300">
@@ -34,20 +62,24 @@ export function Topbar() {
           className="p-2 text-white/60 hover:text-white hover:bg-white/10 rounded-full transition-colors relative"
           title="Notifications"
         >
-          <Bell className="h-4 h-4 sm:h-5 sm:w-5" />
+          <Bell className="h-4 w-4 sm:h-5 sm:w-5" />
         </button>
 
-        {/* DP Circle Avatar Button */}
+        {/* Avatar Button */}
         <button
           type="button"
           onClick={() => setIsMenuOpen((prev) => !prev)}
-          className="w-8 h-8 rounded-full bg-gradient-to-tr from-[#D4E556] to-emerald-400 text-[#1C1C1E] font-black text-xs flex items-center justify-center shadow-md hover:scale-105 active:scale-95 transition-all ring-2 ring-white/10 focus:outline-none"
+          className="w-8 h-8 rounded-full overflow-hidden bg-gradient-to-tr from-[#D4E556] to-emerald-400 text-[#1C1C1E] font-black text-xs flex items-center justify-center shadow-md hover:scale-105 active:scale-95 transition-all ring-2 ring-white/10 focus:outline-none"
           title="Profile & Settings"
         >
-          DP
+          {user?.photoUrl ? (
+            <Image src={user.photoUrl} alt={user.name ?? "User"} width={32} height={32} className="w-full h-full object-cover" />
+          ) : (
+            initials
+          )}
         </button>
 
-        {/* Settings & Profile Dropdown Popup */}
+        {/* Settings & Profile Dropdown */}
         <AnimatePresence>
           {isMenuOpen && (
             <motion.div
@@ -59,12 +91,16 @@ export function Topbar() {
             >
               {/* Profile Header */}
               <div className="flex items-center gap-3 p-3 rounded-2xl bg-white/5 border border-white/5">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-[#D4E556] to-emerald-400 text-[#1C1C1E] font-black text-sm flex items-center justify-center shrink-0 shadow-md">
-                  DP
+                <div className="w-10 h-10 rounded-full overflow-hidden bg-gradient-to-tr from-[#D4E556] to-emerald-400 text-[#1C1C1E] font-black text-sm flex items-center justify-center shrink-0 shadow-md">
+                  {user?.photoUrl ? (
+                    <Image src={user.photoUrl} alt={user.name ?? "User"} width={40} height={40} className="w-full h-full object-cover" />
+                  ) : (
+                    initials
+                  )}
                 </div>
                 <div className="flex flex-col min-w-0">
-                  <span className="text-sm font-bold text-white truncate">Rahul</span>
-                  <span className="text-[11px] font-medium text-[#A0A0A5] truncate">rahul@dailyplan.app</span>
+                  <span className="text-sm font-bold text-white truncate">{user?.name ?? "User"}</span>
+                  <span className="text-[11px] font-medium text-[#A0A0A5] truncate">{user?.email ?? ""}</span>
                 </div>
               </div>
 
@@ -95,10 +131,10 @@ export function Topbar() {
                 </button>
               </div>
 
-              {/* Footer Action */}
+              {/* Footer */}
               <div className="pt-2 mt-2 border-t border-white/10">
                 <button
-                  onClick={() => setIsMenuOpen(false)}
+                  onClick={handleLogout}
                   className="flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-bold text-rose-400 hover:bg-rose-500/10 transition-all text-left w-full"
                 >
                   <LogOut className="w-4 h-4" />

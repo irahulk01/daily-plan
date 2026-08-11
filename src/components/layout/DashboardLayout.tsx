@@ -5,13 +5,22 @@ import { CreateTaskModal } from "../CreateTaskModal";
 import { CreateIdeaModal } from "../CreateIdeaModal";
 import { FloatingCreateButton } from "../FloatingCreateButton";
 import { db } from "@/lib/db";
+import { getSession } from "@/lib/session";
 import { Suspense } from "react";
 
 export async function DashboardLayout({ children }: { children: React.ReactNode }) {
+  const session = await getSession();
+
   const projects = await db.project.findMany({
+    where: session ? { userId: session.id } : {},
     select: { id: true, name: true, color: true },
     orderBy: { createdAt: "asc" }
   });
+
+  const user = session
+    ? { name: session.name, email: session.email, photoUrl: session.photoUrl }
+    : undefined;
+
 
   return (
     <div className="flex h-screen overflow-hidden relative bg-[#1C1C1E] text-white">
@@ -23,7 +32,7 @@ export async function DashboardLayout({ children }: { children: React.ReactNode 
         <div className="flex flex-col flex-1 w-0 h-full overflow-hidden">
           {/* Main Content Area with Sticky Glass Topbar */}
           <main className="flex-1 relative overflow-y-auto focus:outline-none pb-24 md:pb-8 scroll-smooth scrollbar-hide">
-            <Topbar />
+            <Topbar user={user} />
             <div className="py-4 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
               {children}
             </div>

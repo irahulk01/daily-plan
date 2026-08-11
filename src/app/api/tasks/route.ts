@@ -1,9 +1,12 @@
 import { db } from "@/lib/db";
+import { getSession } from "@/lib/session";
 import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
+    const session = await getSession();
     const tasks = await db.task.findMany({
+      where: session ? { userId: session.id } : {},
       include: { project: true },
       orderBy: { createdAt: "desc" }
     });

@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import "./globals.css";
 import { QueryProvider } from "@/providers/QueryProvider";
 import { ServiceWorkerRegister } from "@/components/ServiceWorkerRegister";
@@ -26,18 +25,17 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
       suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col bg-[#515055] text-white selection:bg-[#D4E556]/30" suppressHydrationWarning>
+      <body className="min-h-full flex flex-col bg-[#1C1C1E] text-white selection:bg-[#D4E556]/30" suppressHydrationWarning>
         <QueryProvider>
-          <DashboardLayout>{children}</DashboardLayout>
+          {children}
         </QueryProvider>
-
         <ServiceWorkerRegister />
       </body>
     </html>
