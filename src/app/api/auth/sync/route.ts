@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getAdminAuth } from "@/lib/firebase-admin";
 import { db } from "@/lib/db";
-import { setSession } from "@/lib/session";
+import { SESSION_COOKIE, MAX_AGE, encode } from "@/lib/session";
 
 export const runtime = "nodejs";
 
@@ -91,16 +91,25 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    // 4. Set session cookie
-    await setSession({
+    // 4. Return success response with session cookie set directly on response
+    const sessionData = {
       id: user.id,
       firebaseUid: user.firebaseUid,
       email: user.email,
       name: user.name,
       photoUrl: user.photoUrl,
+    };
+
+    const res = NextResponse.json({ ok: true, user: { id: user.id, name: user.name, email: user.email } });
+    res.cookies.set(SESSION_COOKIE, encode(sessionData), {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: MAX_AGE,
+      path: "/",
     });
 
-    return NextResponse.json({ ok: true, user: { id: user.id, name: user.name, email: user.email } });
+    return res;
   } catch (err: any) {
     console.error("[auth/sync] Fatal error:", err);
     return NextResponse.json({ error: err?.message || "Authentication failed" }, { status: 500 });

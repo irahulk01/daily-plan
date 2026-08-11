@@ -8,11 +8,11 @@ export interface SessionUser {
   photoUrl: string | null;
 }
 
-const SESSION_COOKIE = "dp_session";
-const MAX_AGE = 60 * 60 * 24 * 7; // 7 days
+export const SESSION_COOKIE = "dp_session";
+export const MAX_AGE = 60 * 60 * 24 * 7; // 7 days
 
 // Encode session payload as a simple base64 JSON (no external deps)
-function encode(payload: SessionUser): string {
+export function encode(payload: SessionUser): string {
   return Buffer.from(JSON.stringify(payload)).toString("base64");
 }
 
